@@ -304,14 +304,17 @@ function login() {
     return;
   }
 
-  if (email === localStorage.getItem("email") &&
-      password === localStorage.getItem("password")) {
+  if (
+    email === localStorage.getItem("email") &&
+    password === localStorage.getItem("password")
+  ) {
     alert("Welcome " + localStorage.getItem("username") + "! Login Successful");
-      window.location.href = "preferences.html";
+    window.location.href = "main.html";   // ✅ CHANGE IS HERE
   } else {
     highlight(loginPassword, loginPasswordError, "Invalid email or password");
   }
 }
+
 
 /* RESET PASSWORD */
 function resetPassword(){
