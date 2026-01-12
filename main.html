@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MindFlex - Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(180deg, #B3E5FC 0%, #E1F5FE 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  width: 320px;
+  height: 640px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, #BBDEFB 0%, #E3F2FD 100%);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Header */
+.header {
+  padding: 25px 20px 10px;
+  color: #0D47A1;
+  position: relative;
+}
+.header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.header span {
+  font-weight: 700;
+  font-size: 20px;
+}
+.weather {
+  position: absolute;
+  top: 25px;
+  right: 20px;
+  text-align: right;
+  font-size: 13px;
+  color: #0D47A1;
+  opacity: 0.85;
+}
+.weather span {
+  display: block;
+  font-size: 11px;
+}
+
+/* Baymax */
+.baymax-section {
+  text-align: center;
+  margin-top: 5px;
+}
+.baymax-img {
+  width: 120px;
+  height: auto;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  padding: 0 20px 10px;
+}
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  height: 100px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1565C0;
+  font-weight: 600;
+  font-size: 13px;
+  transition: 0.25s;
+  border: 2px solid #E3F2FD;
+}
+.card:hover {
+  transform: translateY(-2px);
+  background: #F0F9FF;
+}
+.card span {
+  font-size: 25px;
+  margin-bottom: 6px;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  height: 60px;
+  background: #FFFFFF;
+  border-top: 1px solid #E3F2FD;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.08);
+}
+.bottom-nav a {
+  text-decoration: none; 
+  font-size: 22px;
+  color: #90CAF9;
+  transition: 0.3s;
+}
+.bottom-nav a.active {
+  color: #1565C0;
+  transform: scale(1.15);
+}
+
+/* Floating Add Button */
+.add-btn {
+  position: absolute;
+  bottom: 75px;
+  right: 25px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #64B5F6, #1E88E5);
+  border-radius: 50%;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  color: white;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.add-btn:hover {
+  transform: scale(1.1);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h2>Good Morning,<br><span>John Doe! 👋</span></h2>
+    <div class="weather">
+      ☁️ 76°<br><span>Tuesday, April 23</span>
+    </div>
+  </div>
+
+  <!-- Baymax -->
+  <div class="baymax-section">
+    <img src="baymax.png" alt="Baymax" class="baymax-img" />
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="grid">
+    <button class="card" onclick="navigateTo('focuslab.html')">
+      <span>🧠</span>Focus Lab
+    </button>
+    <button class="card" onclick="navigateTo('calm2.html')">
+      <span>🧘</span>Calm Space
+    </button>
+    <button class="card" onclick="navigateTo('journal.html')">
+      <span>📘</span>Journal
+    </button>
+    <button class="card" onclick="navigateTo('routine.html')">
+      <span>🗓️</span>Routine & Tasks
+    </button>
+    <button class="card" onclick="navigateTo('StudyZone.html')">
+      <span>💡</span>Study Zone 
+    </button>
+     <button class="card" onclick="navigateTo('progress.tracker.html')">
+      <span>📈</span>Progress Tracker
+    </button>
+  </div>
+
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+  <a href="achievements.html">
+  <img src="https://i.pinimg.com/736x/9c/9e/da/9c9edaad642f63a38e2cb2137c185514.jpg" 
+      alt="Achievements" 
+    style="width:30px; height:30px; border-radius:50%;">
+</a>
+  <a href="habittracker.html">
+  <img src="https://i.pinimg.com/1200x/89/8b/a9/898ba91e4cbb277f47244d1b506cdf60.jpg" 
+      alt="Habit Tracker" 
+      style="width:70px; height:40px; border-radius:50%;">
+</a>
+
+  <a href="profile.html">
+  <img src="https://i.pinimg.com/1200x/d2/25/07/d2250772dc3221bfe9ed14d1d4cf0ec7.jpg" 
+      alt="Profile" 
+      style="width:50px; height:50px; border-radius:50%;">
+</a>
+
+    <a href="#" class="active">
+  <img src="https://i.pinimg.com/736x/c2/fb/2c/c2fb2c851cf73af8cc4b8eb6d880e0d1.jpg" 
+    alt="Home" 
+    style="width:50px; height:50px; border-radius:50%;">
+</a>
+
+    
+</div>
+
+<script>
+  function navigateTo(page) {
+    window.location.href = page;
+  }
+</script>
+
+</body>
+</html>

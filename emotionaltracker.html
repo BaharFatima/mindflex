@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Emotion Tracker — Tier 2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --blue:#1565C0;
+  --soft:#BBDEFB;
+  --muted:#0D47A1;
+  --bg:#F7FAFF;
+}
+body {
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  background:linear-gradient(180deg,#E3F2FD,#FFFFFF);
+}
+.appScreen {
+  width:360px;
+  height:800px;
+  background:var(--bg);
+  border-radius:24px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.15);
+  display:flex;
+  flex-direction:column;
+  padding:16px;
+  box-sizing:border-box;
+}
+header {
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-bottom:12px;
+}
+.back-btn {
+  background:var(--blue);
+  color:white;
+  border:none;
+  border-radius:50px;
+  padding:6px 12px;
+  font-size:16px;
+  cursor:pointer;
+}
+.title {
+  font-size:20px;
+  font-weight:600;
+  color:var(--blue);
+  text-align:center;
+  flex-grow:1;
+}
+#status {
+  font-size:14px;
+  color:var(--muted);
+  text-align:center;
+  margin:8px 0;
+}
+#scene {
+  background:#fff;
+  border-radius:14px;
+  padding:16px;
+  font-size:16px;
+  color:#0b3a63;
+  width:100%;
+  min-height:150px;
+  margin:12px 0;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(21,101,192,0.1);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+#progress {
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:10px;
+  text-align:center;
+}
+#options {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  width:100%;
+  align-items:center;
+  margin-bottom:12px;
+}
+.option {
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  background:var(--blue);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:transform 0.2s, background 0.2s;
+}
+.option:hover { transform:scale(1.03); background:#0D47A1; }
+.option.correct { background:#4CAF50; }
+.option.wrong { background:#E53935; }
+#nextBtn {
+  padding:12px 20px;
+  font-size:16px;
+  border:none;
+  border-radius:14px;
+  background:var(--blue);
+  color:white;
+  cursor:pointer;
+  display:none;
+}
+#levelBar {
+  font-size:14px;
+  color:var(--muted);
+  margin-top:auto;
+  text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="appScreen">
+  <header>
+    <button class="back-btn" onclick="window.location.href='../focuslab.html'">← Back</button>
+    <div class="title">Emotion Tracker — Tier 2</div>
+    <div style="width:50px;"></div>
+  </header>
+
+  <div id="status">Read the scene and select the best emotion.</div>
+  <div id="scene">Loading scene...</div>
+  <div id="progress">Question 1 / 10</div>
+  <div id="options"></div>
+  <button id="nextBtn">Next Level ➜</button>
+  <div id="levelBar">Level 1 / 150</div>
+</div>
+
+<script>
+const LEVELS_TOTAL = 150;
+const QUESTIONS_PER_LEVEL = 10;
+const ALL_EMOTIONS = [
+  "Happy","Sad","Angry","Surprised","Scared","Embarrassed","Proud","Guilty",
+  "Loved","Nervous","Annoyed","Relieved","Content","Nostalgic","Disappointed",
+  "Conflicted","Regretful","Bittersweet","Jealous","Hopeful","Compassionate",
+  "Indifferent","Curious","Bored","Grateful","Anxious","Excited","Lonely","Shy","Calm"
+];
+
+// Sample scenes
+const EASY = [
+  {id:'E1', text:'You see your best friend smile at you.', emotion:'Happy'},
+  {id:'E2', text:'You drop your ice cream on the floor.', emotion:'Sad'},
+  {id:'E3', text:'Someone surprises you with a gift.', emotion:'Surprised'},
+  {id:'E4', text:'Your sibling hugs you after a fight.', emotion:'Loved'},
+  {id:'E5', text:'You find a lost pet and return it safely.', emotion:'Proud'}
+];
+const MEDIUM = [
+  {id:'M1', text:'You forgot to do your homework and your teacher asks.', emotion:'Guilty'},
+  {id:'M2', text:'Your friend laughs at a joke you didn’t get.', emotion:'Embarrassed'},
+  {id:'M3', text:'You witness someone being treated unfairly.', emotion:'Compassionate'},
+  {id:'M4', text:'You get nervous before giving a presentation.', emotion:'Nervous'},
+  {id:'M5', text:'You try something new and succeed.', emotion:'Excited'}
+];
+const HARD = [
+  {id:'H1', text:'Your best friend moves away.', emotion:'Lonely'},
+  {id:'H2', text:'You realize you hurt someone unintentionally.', emotion:'Regretful'},
+  {id:'H3', text:'You get conflicting advice from family.', emotion:'Conflicted'},
+  {id:'H4', text:'You win an award you didn’t expect.', emotion:'Proud'},
+  {id:'H5', text:'You feel left out in a group activity.', emotion:'Sad'}
+];
+
+const STORAGE_KEYS = { LEVEL:"et_level", QUESTION:"et_question" };
+let currentLevel = parseInt(localStorage.getItem(STORAGE_KEYS.LEVEL)) || 1;
+let currentQuestion = parseInt(localStorage.getItem(STORAGE_KEYS.QUESTION)) || 1;
+
+let currentScene = null;
+
+const sceneEl=document.getElementById("scene");
+const progressEl=document.getElementById("progress");
+const optionsEl=document.getElementById("options");
+const nextBtn=document.getElementById("nextBtn");
+const levelBar=document.getElementById("levelBar");
+const statusEl=document.getElementById("status");
+
+function getPool(level){
+  if(level<=50) return EASY;
+  if(level<=100) return MEDIUM;
+  return HARD;
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function buildOptions(correct){
+  const set = new Set([correct]);
+  while(set.size<4){
+    const pick = ALL_EMOTIONS[Math.floor(Math.random()*ALL_EMOTIONS.length)];
+    set.add(pick);
+  }
+  return shuffle(Array.from(set));
+}
+
+function renderQuestion(){
+  nextBtn.style.display="none";
+  optionsEl.innerHTML="";
+  levelBar.textContent = `Level ${currentLevel} / ${LEVELS_TOTAL}`;
+  progressEl.textContent = `Question ${currentQuestion} / ${QUESTIONS_PER_LEVEL}`;
+
+  const pool = getPool(currentLevel);
+  currentScene = pool[Math.floor(Math.random()*pool.length)];
+  sceneEl.textContent = currentScene.text;
+
+  const opts = buildOptions(currentScene.emotion);
+
+  let idx = 0;
+  function showNextOption(){
+    if(idx>=opts.length) return;
+    const btn = document.createElement("button");
+    btn.className="option";
+    btn.textContent = opts[idx];
+    btn.onclick = ()=>handleAnswer(btn, opts[idx]);
+    optionsEl.appendChild(btn);
+    idx++;
+    setTimeout(showNextOption, 150);
+  }
+  showNextOption();
+}
+
+function handleAnswer(button, selected){
+  document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+  if(selected===currentScene.emotion){
+    button.classList.add("correct");
+    statusEl.textContent="Correct! 🎉";
+    setTimeout(nextQuestion, 700);
+  } else {
+    button.classList.add("wrong");
+    statusEl.textContent="Not quite — try again.";
+    setTimeout(()=>{
+      button.classList.remove("wrong");
+      document.querySelectorAll(".option").forEach(b=>b.disabled=false);
+      statusEl.textContent="Read the scene and select the best emotion.";
+    },700);
+  }
+}
+
+function nextQuestion(){
+  currentQuestion++;
+  if(currentQuestion>QUESTIONS_PER_LEVEL){
+    currentLevel++;
+    currentQuestion=1;
+    nextBtn.style.display="inline-block";
+  } else {
+    renderQuestion();
+  }
+  saveProgress();
+}
+
+function saveProgress(){
+  localStorage.setItem(STORAGE_KEYS.LEVEL,currentLevel);
+  localStorage.setItem(STORAGE_KEYS.QUESTION,currentQuestion);
+}
+
+nextBtn.onclick = ()=>{
+  nextBtn.style.display="none";
+  renderQuestion();
+}
+
+// Initialize
+renderQuestion();
+</script>
+</body>
+</html>

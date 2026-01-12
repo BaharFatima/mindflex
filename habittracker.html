@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Habit Tracker Pro</title>
+
+<style>
+    body {
+        margin: 0;
+        background: #89A7D6;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+    }
+
+    .app-wrapper {
+        width: 360px;
+        height: 640px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .screen {
+        width: 360px;
+        height: 640px;
+        background: white;
+        border-radius: 25px;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        animation: fadeIn 0.6s ease-out;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        position: relative;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-container {
+        text-align:center;
+        position:relative;
+        margin-bottom:10px;
+    }
+
+    .back-btn {
+        position:absolute;
+        left:10px;
+        top:50%;
+        transform:translateY(-50%);
+        cursor:pointer;
+        font-size:24px;
+        transition:0.2s;
+    }
+
+    .back-btn:active {
+        transform:translateY(-50%) scale(1.2);
+    }
+
+    h1 {
+        font-size:26px;
+        font-weight:700;
+        margin:0;
+        display:inline-block;
+    }
+
+    #historyBtn {
+        position:absolute;
+        right:10px;
+        top:50%;
+        transform:translateY(-50%);
+        cursor:pointer;
+        font-size:20px;
+        color:#4e8cff;
+    }
+
+    .habit-card {
+        background: #eef1ff;
+        padding: 18px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+
+    .habit-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .habit-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .icon-box {
+        width: 32px;
+        height: 32px;
+        background: #4e8cff;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 18px;
+    }
+
+    .progress {
+        width: 100%;
+        height: 8px;
+        background: #dcdcdc;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-top: -5px;
+        margin-bottom: 15px;
+    }
+
+    .progress-fill {
+        height: 8px;
+        width: 0%;
+        background: #4e8cff;
+        border-radius: 20px;
+        transition: width 0.4s ease;
+    }
+
+    .check {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 2px solid #4e8cff;
+        cursor: pointer;
+    }
+
+    .check.active {
+        background: #4e8cff;
+    }
+
+    .insights-box {
+        background: #f0f2ff;
+        padding: 17px;
+        border-radius: 15px;
+        font-size: 16px;
+        font-weight: 500;
+        min-height: 70px;
+        margin-top: 8px;
+    }
+
+    #historyScreen { display:none; }
+
+    .month-history {
+        background: #eef1ff;
+        padding: 15px;
+        border-radius: 15px;
+        margin-bottom: 12px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app-wrapper">
+
+<!-- 🏠 HOME SCREEN -->
+<div class="screen" id="homeScreen">
+
+    <div class="header-container">
+        <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+        <h1>Habit Tracker</h1>
+        <span id="historyBtn">📅</span>
+    </div>
+
+    <div class="habit-card">
+
+        <div class="habit-row">
+            <div class="habit-left">
+                <div class="icon-box">💤</div>
+                <span>Sleep</span>
+            </div>
+            <div class="check" onclick="toggle(this, 'sleep')"></div>
+        </div>
+        <div class="progress"><div id="sleepBar" class="progress-fill"></div></div>
+
+        <div class="habit-row">
+            <div class="habit-left">
+                <div class="icon-box">🏃</div>
+                <span>Exercise</span>
+            </div>
+            <div class="check" onclick="toggle(this, 'exercise')"></div>
+        </div>
+        <div class="progress"><div id="exerciseBar" class="progress-fill"></div></div>
+
+        <div class="habit-row">
+            <div class="habit-left">
+                <div class="icon-box">🍽️</div>
+                <span>Diet</span>
+            </div>
+            <div class="check" onclick="toggle(this, 'diet')"></div>
+        </div>
+        <div class="progress"><div id="dietBar" class="progress-fill"></div></div>
+
+        <div class="habit-row">
+            <div class="habit-left">
+                <div class="icon-box">📘</div>
+                <span>Reading</span>
+            </div>
+            <div class="check" onclick="toggle(this, 'reading')"></div>
+        </div>
+        <div class="progress"><div id="readingBar" class="progress-fill"></div></div>
+
+    </div>
+
+    <div class="insights-box" id="insights">
+        Track your habits to receive insights...
+    </div>
+</div>
+
+<!-- 📅 HISTORY SCREEN -->
+<div class="screen" id="historyScreen">
+
+    <div class="header-container">
+        <span class="back-btn" id="historyBack">←</span>
+        <h1>History</h1>
+    </div>
+
+    <div id="historyList"></div>
+
+</div>
+
+</div> <!-- END WRAPPER -->
+
+<script>
+
+// -------- Month Reset --------
+let currentMonth = new Date().getMonth() + 1;
+let savedMonth = localStorage.getItem("savedMonth");
+
+if (savedMonth != currentMonth) {
+    progress = { sleep: 0, exercise: 0, diet: 0, reading: 0 };
+    localStorage.setItem("progress", JSON.stringify(progress));
+    localStorage.setItem("savedMonth", currentMonth);
+}
+
+let progress = JSON.parse(localStorage.getItem("progress")) || {
+    sleep: 0, exercise: 0, diet: 0, reading: 0
+};
+
+let history = JSON.parse(localStorage.getItem("history")) || {};
+
+function updateUI() {
+    for (let key in progress) {
+        document.getElementById(key + "Bar").style.width = progress[key] + "%";
+    }
+    updateInsights();
+}
+
+function toggle(el, habit) {
+    let now = new Date();
+    let days = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    let step = 100 / days;
+
+    el.classList.toggle("active");
+
+    progress[habit] += el.classList.contains("active") ? step : -step;
+    progress[habit] = Math.min(Math.max(progress[habit], 0), 100);
+
+    document.getElementById(habit+"Bar").style.width = progress[habit] + "%";
+    localStorage.setItem("progress", JSON.stringify(progress));
+
+    updateInsights();
+}
+
+function saveMonthlyHistory() {
+    let now = new Date();
+    let key = `${now.getFullYear()}-${now.getMonth()+1}`;
+
+    history[key] = { ...progress, savedOn: now.toLocaleString() };
+    localStorage.setItem("history", JSON.stringify(history));
+}
+
+function showHistory() {
+    let out = "";
+    for (let m in history) {
+        let h = history[m];
+        out += `
+            <div class="month-history">
+                <b>${m}</b><br>
+                💤 Sleep: ${h.sleep.toFixed(1)}%<br>
+                🏃 Exercise: ${h.exercise.toFixed(1)}%<br>
+                🍽️ Diet: ${h.diet.toFixed(1)}%<br>
+                📘 Reading: ${h.reading.toFixed(1)}%<br>
+                <small>Saved: ${h.savedOn}</small>
+            </div>`;
+    }
+    document.getElementById("historyList").innerHTML = out;
+}
+
+historyBtn.onclick = () => {
+    saveMonthlyHistory();
+    showHistory();
+    homeScreen.style.display = "none";
+    historyScreen.style.display = "block";
+};
+
+historyBack.onclick = () => {
+    historyScreen.style.display = "none";
+    homeScreen.style.display = "block";
+};
+
+/* ⭐ FULL FUNCTIONAL BACK BUTTON */
+backBtn.onclick = () => {
+    window.location.href = "index.html";
+};
+
+function updateInsights() {
+    let total = progress.sleep + progress.exercise + progress.diet + progress.reading;
+    let msg = "Keep going!";
+    if (total > 120) msg = "You're improving!";
+    if (total > 250) msg = "Amazing! Routine mastered!";
+    insights.innerHTML = msg;
+}
+
+updateUI();
+</script>
+
+</body>
+</html>
